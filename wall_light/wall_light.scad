@@ -71,8 +71,8 @@ module support_top_right()
         union()
         {
             cube([ 50, 5, 5 ]);
-            translate([ 45, 5, 0 ]) cube([ 5, 5, 10 ]);
-            translate([ 45, 5, 10 ]) rotate([0,90,0])linear_extrude(height = 5) polygon(points = [ [ 0, 0 ], [ 0, 5 ], [ -5, 0 ] ]);
+            translate([ 45, 0, 0 ]) cube([ 5, 5, 10 ]);
+            translate([ 45, 0, 10 ]) rotate([0,90,0])linear_extrude(height = 5) polygon(points = [ [ 0, 0 ], [ 0, 5 ], [ -5, 0 ] ]);
         }
         union()
         {
