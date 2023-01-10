@@ -37,45 +37,49 @@ eps = tolerance / 2;
 
 module Filler()
 {
-    Peg();
+    Peg(stdHeight);
     translate([ 0, 0, pegLength ]) Enclosure(stdHeight);
 }
 
 module Topper()
 {
-    Peg();
-    translate([ 0, 0, pegLength ]) Enclosure(stdHeight - pegLength - topPegLength);
+    difference()
+    {
+        union()
+        {
+            Peg(stdHeight - topPegLength);
+            translate([ 0, 0, pegLength ]) Enclosure(stdHeight - pegLength - topPegLength);
+        }
+        translate([ -5, -2 * eps, stdHeight - 5 ]) cube([ totMissingWidth / 2 - thickness + 10, 1 + 2 * eps, 10 ]);
+        translate([ -5, glassThickness - 1 - eps, stdHeight - 5 ]) cube([ totMissingWidth / 2 - thickness + 10, 1 + 2 * eps, 10 ]);
+        translate([ -4 + eps, -5, stdHeight - topPegLength + eps ]) cube([ 5, thickness + 10, pegLength + 5 + eps ]);
+    }
 }
 
-module Peg()
+module Peg(maxExpandedHeight)
 {
-    roundedcube_simple([ totMissingWidth / 2 - thickness - eps, glassThickness - eps, stdHeight ]);
-    translate([ 0, -2*eps, pegLength ]) roundedcube_simple([ totMissingWidth / 2 - thickness - eps, glassThickness + 4 * eps, stdHeight - pegLength ]);
+    difference()
+    {
+        union()
+        {
+            cube([ totMissingWidth / 2 - thickness - eps, glassThickness - eps, stdHeight ]);
+            translate([ 0, -2 * eps, pegLength ]) cube([ totMissingWidth / 2 - thickness - eps, glassThickness + 4 * eps, maxExpandedHeight - pegLength ]);
+        }
+        translate([ -5, -2 * eps, -5 ]) cube([ totMissingWidth / 2 - thickness + 10, 1 + 2 * eps, 10 ]);
+        translate([ -5, glassThickness - 1 - eps, -5 ]) cube([ totMissingWidth / 2 - thickness + 10, 1 + 2 * eps, 10 ]);
+        translate([ -4 + eps, -5, -5 ]) cube([ 5, thickness + 10, pegLength + 5 + eps ]);
+    }
 }
 
 module Enclosure(height)
 {
-    translate([ -thickness, -thickness-eps, 0 ])
+    translate([ -thickness, -thickness - eps, 0 ])
     {
         difference()
         {
-            roundedcube_simple([ totMissingWidth / 2 + thickness, thickness * 2 + glassThickness + eps, height ]);
+            cube([ totMissingWidth / 2 + thickness, thickness * 2 + glassThickness + eps, height ]);
             translate([ thickness, thickness + eps / 2, -5 ]) cube([ totMissingWidth / 2 + thickness, glassThickness + eps, height + 10 ]);
+            translate([ thickness - 1 - eps, thickness + eps / 2, stdHeight - pegLength - eps ]) cube([ totMissingWidth / 2 + thickness, glassThickness + eps, pegLength + 5 ]);
         }
-    }
-}
-
-module roundedcube_simple(size = [ 1, 1, 1 ], center = false, radius = 0.5)
-{
-    // If single value, convert to [x, y, z] vector
-    size = (size[0] == undef) ? [ size, size, size ] : size;
-
-    translate = (center == false) ? [ radius, radius, radius ]
-                                  : [ radius - (size[0] / 2), radius - (size[1] / 2), radius - (size[2] / 2) ];
-
-    translate(v = translate) minkowski()
-    {
-        cube(size = [ size[0] - (radius * 2), size[1] - (radius * 2), size[2] - (radius * 2) ]);
-        sphere(r = radius);
     }
 }
